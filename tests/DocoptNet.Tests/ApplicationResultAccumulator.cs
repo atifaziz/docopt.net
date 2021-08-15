@@ -104,5 +104,84 @@ namespace DocoptNet.Tests
                 Assert.That(Accumulator.Error(new DocoptInputErrorException()), Is.Null);
             }
         }
+
+        public abstract class TypedArguments
+        {
+            public class TestArguments
+            {
+                public bool Command { get; set; }
+                public string? ArgArgument { get; set; }
+                public string? FlagOption { get; set; }
+                public int FlagMaxDegreeOfParallelism { get; set; }
+            }
+
+            protected abstract object AccumulatorObject { get; }
+
+            IApplicationResultAccumulator<TestArguments> Accumulator => (IApplicationResultAccumulator<TestArguments>)AccumulatorObject;
+
+            [Test]
+            public void Command_adds_entry_with_value()
+            {
+                var args = Accumulator.New();
+                args = Accumulator.Command(args, "command", true);
+                var value = args.Command;
+                Assert.That(value, Is.EqualTo(true));
+            }
+
+            [Test]
+            public void Argument_adds_entry_with_value()
+            {
+                var args = Accumulator.New();
+                args = Accumulator.Argument(args, "<argument>", "value");
+                var value = args.ArgArgument;
+                Assert.That(value, Is.EqualTo("value"));
+            }
+
+            [Test]
+            public void Option_adds_entry_with_value()
+            {
+                var args = Accumulator.New();
+                args = Accumulator.Option(args, "--option", "value");
+                var value = args.FlagOption;
+                Assert.That(value, Is.EqualTo("value"));
+            }
+
+            [Test]
+            public void Option_with_multiple_words_is_kebabised()
+            {
+                var args = Accumulator.New();
+                args = Accumulator.Option(args, "--max-degree-of-parallelism", 101);
+                var value = args.FlagMaxDegreeOfParallelism;
+                Assert.That(value, Is.EqualTo(101));
+            }
+
+            [Test]
+            public void Error_returns_null()
+            {
+                Assert.That(Accumulator.Error(new DocoptInputErrorException()), Is.Null);
+            }
+        }
+
+        [TestFixture]
+        public class TypedArgumentsWithInferredNaming : TypedArguments
+        {
+            protected override object AccumulatorObject =>
+                ApplicationResultAccumulators.Create<TestArguments>(
+                    args => args.Command,
+                    args => args.ArgArgument,
+                    args => args.FlagOption,
+                    args => args.FlagMaxDegreeOfParallelism);
+        }
+
+        [TestFixture]
+        public class TypedArgumentsWithExplicitNaming : TypedArguments
+        {
+            protected override object AccumulatorObject =>
+                ApplicationResultAccumulators.Create<TestArguments>(
+                    ("command"                    , args => args.Command                   ),
+                    ("<argument>"                 , args => args.ArgArgument               ),
+                    ("--option"                   , args => args.FlagOption                ),
+                    ("--max-degree-of-parallelism", args => args.FlagMaxDegreeOfParallelism));
+        }
     }
 }
