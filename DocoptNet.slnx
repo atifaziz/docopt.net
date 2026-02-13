@@ -1,0 +1,31 @@
+<Solution>
+  <Folder Name="/Examples/">
+    <Project Path="eg/NavalFate/NavalFate.csproj" />
+  </Folder>
+  <Folder Name="/Examples/SourceGenerator/">
+    <File Path="eg/SourceGenerator/Directory.Build.props" />
+    <File Path="eg/SourceGenerator/Directory.Build.targets" />
+    <File Path="eg/SourceGenerator/Extensions.cs" />
+    <Project Path="eg/SourceGenerator/ArgumentsExample/ArgumentsExample.csproj" />
+    <Project Path="eg/SourceGenerator/CalculatorExample/CalculatorExample.csproj" />
+    <Project Path="eg/SourceGenerator/CountedExample/CountedExample.csproj" />
+    <Project Path="eg/SourceGenerator/Git/Git.csproj" />
+    <Project Path="eg/SourceGenerator/NavalFate/NavalFate.csproj" />
+    <Project Path="eg/SourceGenerator/OddEvenExample/OddEvenExample.csproj" />
+    <Project Path="eg/SourceGenerator/OptionsExample/OptionsExample.csproj" />
+    <Project Path="eg/SourceGenerator/OptionsShortcutExample/OptionsShortcutExample.csproj" />
+    <Project Path="eg/SourceGenerator/QuickExample/QuickExample.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".github/workflows/ci.yml" />
+    <File Path="Directory.Build.props" />
+    <File Path="global.json" />
+    <File Path="LICENSE-MIT" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="src/DocoptNet.Playground/DocoptNet.Playground.csproj" />
+  <Project Path="src/DocoptNet/DocoptNet.csproj" />
+  <Project Path="tests/DocoptNet.Tests/DocoptNet.Tests.csproj" />
+  <Project Path="tests/LanguageAgnosticTests/Testee.csproj" />
+</Solution>
