@@ -40,6 +40,10 @@ Portions Copyright (C) West Wind Technologies, 2008.
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(RoslynVersion)' == '4.4'">
+    <DefineConstants>$(DefineConstants);ROSLYN4_4</DefineConstants>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.1' Or '$(TargetFramework)' == 'netstandard2.0'">
     <DefineConstants>$(DefineConstants);RUNTIME_SERIALIZATION</DefineConstants>
   </PropertyGroup>
@@ -49,14 +53,23 @@ Portions Copyright (C) West Wind Technologies, 2008.
     <None Include="CodeGeneration\*.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' != 'net47'">
+  <ItemGroup Condition="'$(TargetFramework)' != 'net47' And '$(RoslynVersion)' != '4.4'">
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.10.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'net47' And '$(RoslynVersion)' == '4.4'">
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'net47'">
     <AdditionalFiles Include="CodeGeneration\AnalyzerReleases.*.md" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- Package the generator in the analyzer directory of the nuget package -->
     <None Include="$(OutputPath)\netstandard2.0\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <!-- Package the Roslyn 4.4 variant of the analyzer -->
+    <None Include="$(MSBuildProjectDirectory)\bin\roslyn4.4\$(Configuration)\netstandard2.0\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/roslyn4.4/cs" Visible="false" />
     <!--
     Using a "PackagePath" of "build/$(TargetFramework)/%(Filename)%(Extension)" causes the
     following error:
@@ -95,5 +108,13 @@ Portions Copyright (C) West Wind Technologies, 2008.
     <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
   </ItemGroup>
+
+  <Target Name="_ValidateRoslyn44AnalyzerOutput" BeforeTargets="GenerateNuspec">
+    <PropertyGroup>
+      <_Roslyn44AnalyzerPath>$(MSBuildProjectDirectory)\bin\roslyn4.4\$(Configuration)\netstandard2.0\$(AssemblyName).dll</_Roslyn44AnalyzerPath>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(_Roslyn44AnalyzerPath)')"
+           Text="Roslyn 4.4 analyzer output not found at '$(_Roslyn44AnalyzerPath)'. Build all Roslyn variants first by running: ./build.ps1 -Pack" />
+  </Target>
 
 </Project>
