@@ -44,6 +44,10 @@ Portions Copyright (C) West Wind Technologies, 2008.
     <DefineConstants>$(DefineConstants);ROSLYN4_4</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <_Roslyn44AnalyzerPath>$(MSBuildProjectDirectory)\bin\roslyn4.4\$(Configuration)\netstandard2.0\$(AssemblyName).dll</_Roslyn44AnalyzerPath>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.1' Or '$(TargetFramework)' == 'netstandard2.0'">
     <DefineConstants>$(DefineConstants);RUNTIME_SERIALIZATION</DefineConstants>
   </PropertyGroup>
@@ -69,7 +73,7 @@ Portions Copyright (C) West Wind Technologies, 2008.
     <!-- Package the generator in the analyzer directory of the nuget package -->
     <None Include="$(OutputPath)\netstandard2.0\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <!-- Package the Roslyn 4.4 variant of the analyzer -->
-    <None Include="$(MSBuildProjectDirectory)\bin\roslyn4.4\$(Configuration)\netstandard2.0\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/roslyn4.4/cs" Visible="false" />
+    <None Include="$(_Roslyn44AnalyzerPath)" Pack="true" PackagePath="analyzers/dotnet/roslyn4.4/cs" Visible="false" />
     <!--
     Using a "PackagePath" of "build/$(TargetFramework)/%(Filename)%(Extension)" causes the
     following error:
@@ -110,9 +114,6 @@ Portions Copyright (C) West Wind Technologies, 2008.
   </ItemGroup>
 
   <Target Name="_ValidateRoslyn44AnalyzerOutput" BeforeTargets="GenerateNuspec">
-    <PropertyGroup>
-      <_Roslyn44AnalyzerPath>$(MSBuildProjectDirectory)\bin\roslyn4.4\$(Configuration)\netstandard2.0\$(AssemblyName).dll</_Roslyn44AnalyzerPath>
-    </PropertyGroup>
     <Error Condition="!Exists('$(_Roslyn44AnalyzerPath)')"
            Text="Roslyn 4.4 analyzer output not found at '$(_Roslyn44AnalyzerPath)'. Build all Roslyn variants first by running: ./build.ps1 -Pack" />
   </Target>
