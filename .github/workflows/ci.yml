@@ -48,7 +48,7 @@ jobs:
       run: dotnet tool restore
 
     - name: Build
-      run: dotnet build --configuration ${{ env.CONFIGURATION }}
+      run: dotnet pwsh ./build.ps1 -Configuration ${{ env.CONFIGURATION }}
 
     - name: Pack (Windows only)
       if: runner.os == 'Windows'
@@ -88,7 +88,7 @@ jobs:
           ForEach-Object { dotnet sourcelink test $_; if ($LASTEXITCODE) { throw "SourceLink test failed for $_" } }
 
     - name: Test
-      run: dotnet test --no-build --configuration ${{ env.CONFIGURATION }}
+      run: dotnet pwsh ./build.ps1 -Test -NoBuild -Configuration ${{ env.CONFIGURATION }}
 
     - name: Integration Tests (Windows)
       if: runner.os == 'Windows'
